@@ -1,7 +1,7 @@
 # Vue3333
 Vue3333自学
 
-
+# vue2的注意事项
 在某些情况下，我们可能需要动态地创建一个方法函数，比如创建一个预置防抖的事件处理器：
 
 ```javascript
@@ -37,3 +37,54 @@ export default {
   }
 }
 ```
+
+#vue3响应式代理
+
+为保证访问代理的一致性，对同一个对象调用 reactive() 会总是返回同样的代理，而对代理调用 reactive() 则会返回它自己
+
+```javascript
+const raw = {}
+const proxy = reactive(raw)
+
+// 代理和原始对象不是全等的
+console.log(proxy === raw) // false
+
+// 在同一个对象上调用 reactive() 会返回相同的代理
+console.log(reactive(raw) === proxy) // true
+
+// 在一个代理上调用 reactive() 会返回它自己
+console.log(reactive(proxy) === proxy) // true
+
+// 这个规则对深层级的对象也适用。依靠深层响应性，响应式对象内的深层级对象依然是代理
+const proxy = reactive({})
+const raw = {}
+proxy.nested = raw
+
+console.log(proxy.nested === raw) // false
+```
+
+reactive() API 有两条限制：
+1、仅对对象类型有效（对象、数组和 Map、Set 这样的集合类型），而对 string、number 和 boolean 这样的 基础类型 无效。
+2、因为 Vue 的响应式系统是通过属性访问进行追踪的，因此我们必须始终保持对该响应式对象的引用。这意味着我们不可以随意地 “替换” 一个响应式对象
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
